@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java文件读写," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chas Gao's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="java中多种方式读文件一、多种方式读文件内容。 按字节读取文件内容 按字符读取文件内容 按行读取文件内容 随机读取文件内容import java.io.BufferedReader;  import java.io.File;  import java.io.FileInputStream;  import java.io.FileReader;  import java.io.IOExcept">
+<meta name="keywords" content="java文件读写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java读写文件大全">
+<meta property="og:url" content="https://chasgao.github.io/2016/12/14/java读写文件大全/index.html">
+<meta property="og:site_name" content="Chas Gao&#39;s Blog">
+<meta property="og:description" content="java中多种方式读文件一、多种方式读文件内容。 按字节读取文件内容 按字符读取文件内容 按行读取文件内容 随机读取文件内容import java.io.BufferedReader;  import java.io.File;  import java.io.FileInputStream;  import java.io.FileReader;  import java.io.IOExcept">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-21T08:17:36.911Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java读写文件大全">
+<meta name="twitter:description" content="java中多种方式读文件一、多种方式读文件内容。 按字节读取文件内容 按字符读取文件内容 按行读取文件内容 随机读取文件内容import java.io.BufferedReader;  import java.io.File;  import java.io.FileInputStream;  import java.io.FileReader;  import java.io.IOExcept">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://chasgao.github.io/2016/12/14/java读写文件大全/"/>
+
+  <title> java读写文件大全 | Chas Gao's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2a93c0137a5582707891d03897b1f595";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chas Gao's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Share Note</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pN-fusxNozugfk_F1DZM','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                java读写文件大全
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-14T00:17:00+08:00" content="2016-12-14">
+              2016-12-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/14/java读写文件大全/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/14/java读写文件大全/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="java中多种方式读文件"><a href="#java中多种方式读文件" class="headerlink" title="java中多种方式读文件"></a>java中多种方式读文件</h3><h5 id="一、多种方式读文件内容。"><a href="#一、多种方式读文件内容。" class="headerlink" title="一、多种方式读文件内容。"></a>一、多种方式读文件内容。</h5><ol>
+<li>按字节读取文件内容</li>
+<li>按字符读取文件内容</li>
+<li>按行读取文件内容</li>
+<li>随机读取文件内容<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.io.BufferedReader;  </span><br><span class="line">import java.io.File;  </span><br><span class="line">import java.io.FileInputStream;  </span><br><span class="line">import java.io.FileReader;  </span><br><span class="line">import java.io.IOException;  </span><br><span class="line">import java.io.InputStream;  </span><br><span class="line">import java.io.InputStreamReader;  </span><br><span class="line">import java.io.RandomAccessFile;  </span><br><span class="line">import java.io.Reader;  </span><br><span class="line">public class ReadFromFile &#123;  </span><br><span class="line">/** </span><br><span class="line">* 以字节为单位读取文件，常用于读二进制文件，如图片、声音、影像等文件。 </span><br><span class="line">* @param fileName 文件的名 </span><br><span class="line">*/  </span><br><span class="line">public static void readFileByBytes(String fileName)&#123;  </span><br><span class="line">File file = new File(fileName);  </span><br><span class="line">InputStream in = null;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;以字节为单位读取文件内容，一次读一个字节：&quot;);  </span><br><span class="line">// 一次读一个字节  </span><br><span class="line">in = new FileInputStream(file);  </span><br><span class="line">int tempbyte;  </span><br><span class="line">while((tempbyte=in.read()) != -1)&#123;  </span><br><span class="line">System.out.write(tempbyte);  </span><br><span class="line">&#125;  </span><br><span class="line">in.close();  </span><br><span class="line">&#125; catch (IOException e) &#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">return;  </span><br><span class="line">&#125;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;以字节为单位读取文件内容，一次读多个字节：&quot;);  </span><br><span class="line">//一次读多个字节  </span><br><span class="line">byte[] tempbytes = new byte[100];  </span><br><span class="line">int byteread = 0;  </span><br><span class="line">in = new FileInputStream(fileName);  </span><br><span class="line">ReadFromFile.showAvailableBytes(in);  </span><br><span class="line">//读入多个字节到字节数组中，byteread为一次读入的字节数  </span><br><span class="line">while ((byteread = in.read(tempbytes)) != -1)&#123;  </span><br><span class="line">System.out.write(tempbytes, 0, byteread);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125; catch (Exception e1) &#123;  </span><br><span class="line">e1.printStackTrace();  </span><br><span class="line">&#125; finally &#123;  </span><br><span class="line">if (in != null)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">in.close();  </span><br><span class="line">&#125; catch (IOException e1) &#123;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/** </span><br><span class="line">* 以字符为单位读取文件，常用于读文本，数字等类型的文件 </span><br><span class="line">* @param fileName 文件名 </span><br><span class="line">*/  </span><br><span class="line">public static void readFileByChars(String fileName)&#123;  </span><br><span class="line">File file = new File(fileName);  </span><br><span class="line">Reader reader = null;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;以字符为单位读取文件内容，一次读一个字节：&quot;);  </span><br><span class="line">// 一次读一个字符  </span><br><span class="line">reader = new InputStreamReader(new FileInputStream(file));  </span><br><span class="line">int tempchar;  </span><br><span class="line">while ((tempchar = reader.read()) != -1)&#123;  </span><br><span class="line">//对于windows下，rn这两个字符在一起时，表示一个换行。  </span><br><span class="line">//但如果这两个字符分开显示时，会换两次行。  </span><br><span class="line">//因此，屏蔽掉r，或者屏蔽n。否则，将会多出很多空行。  </span><br><span class="line">if (((char)tempchar) != &apos;r&apos;)&#123;  </span><br><span class="line">System.out.print((char)tempchar);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">reader.close();  </span><br><span class="line">&#125; catch (Exception e) &#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;以字符为单位读取文件内容，一次读多个字节：&quot;);  </span><br><span class="line">//一次读多个字符  </span><br><span class="line">char[] tempchars = new char[30];  </span><br><span class="line">int charread = 0;  </span><br><span class="line">reader = new InputStreamReader(new FileInputStream(fileName));  </span><br><span class="line">//读入多个字符到字符数组中，charread为一次读取字符数  </span><br><span class="line">while ((charread = reader.read(tempchars))!=-1)&#123;  </span><br><span class="line">//同样屏蔽掉r不显示  </span><br><span class="line">if ((charread == tempchars.length)&amp;&amp;(tempchars[tempchars.length-1] != &apos;r&apos;))&#123;  </span><br><span class="line">System.out.print(tempchars);  </span><br><span class="line">&#125;else&#123;  </span><br><span class="line">for (int i=0; i&lt;charread; i++)&#123;  </span><br><span class="line">if(tempchars[i] == &apos;r&apos;)&#123;  </span><br><span class="line">continue;  </span><br><span class="line">&#125;else&#123;  </span><br><span class="line">System.out.print(tempchars[i]);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125; catch (Exception e1) &#123;  </span><br><span class="line">e1.printStackTrace();  </span><br><span class="line">&#125;finally &#123;  </span><br><span class="line">if (reader != null)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">reader.close();  </span><br><span class="line">&#125; catch (IOException e1) &#123;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/** </span><br><span class="line">* 以行为单位读取文件，常用于读面向行的格式化文件 </span><br><span class="line">* @param fileName 文件名 </span><br><span class="line">*/  </span><br><span class="line">public static void readFileByLines(String fileName)&#123;  </span><br><span class="line">File file = new File(fileName);  </span><br><span class="line">BufferedReader reader = null;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;以行为单位读取文件内容，一次读一整行：&quot;);  </span><br><span class="line">reader = new BufferedReader(new FileReader(file));  </span><br><span class="line">String tempString = null;  </span><br><span class="line">int line = 1;  </span><br><span class="line">//一次读入一行，直到读入null为文件结束  </span><br><span class="line">while ((tempString = reader.readLine()) != null)&#123;  </span><br><span class="line">//显示行号  </span><br><span class="line">System.out.println(&quot;line &quot; + line + &quot;: &quot; + tempString);  </span><br><span class="line">line++;  </span><br><span class="line">&#125;  </span><br><span class="line">reader.close();  </span><br><span class="line">&#125; catch (IOException e) &#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125; finally &#123;  </span><br><span class="line">if (reader != null)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">reader.close();  </span><br><span class="line">&#125; catch (IOException e1) &#123;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/** </span><br><span class="line">* 随机读取文件内容 </span><br><span class="line">* @param fileName 文件名 </span><br><span class="line">*/  </span><br><span class="line">public static void readFileByRandomAccess(String fileName)&#123;  </span><br><span class="line">RandomAccessFile randomFile = null;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;随机读取一段文件内容：&quot;);  </span><br><span class="line">// 打开一个随机访问文件流，按只读方式  </span><br><span class="line">randomFile = new RandomAccessFile(fileName, &quot;r&quot;);  </span><br><span class="line">// 文件长度，字节数  </span><br><span class="line">long fileLength = randomFile.length();  </span><br><span class="line">// 读文件的起始位置  </span><br><span class="line">int beginIndex = (fileLength &gt; 4) ? 4 : 0;  </span><br><span class="line">//将读文件的开始位置移到beginIndex位置。  </span><br><span class="line">randomFile.seek(beginIndex);  </span><br><span class="line">byte[] bytes = new byte[10];  </span><br><span class="line">int byteread = 0;  </span><br><span class="line">//一次读10个字节，如果文件内容不足10个字节，则读剩下的字节。  </span><br><span class="line">//将一次读取的字节数赋给byteread  </span><br><span class="line">while ((byteread = randomFile.read(bytes)) != -1)&#123;  </span><br><span class="line">System.out.write(bytes, 0, byteread);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125; catch (IOException e)&#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125; finally &#123;  </span><br><span class="line">if (randomFile != null)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">randomFile.close();  </span><br><span class="line">&#125; catch (IOException e1) &#123;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/** </span><br><span class="line">* 显示输入流中还剩的字节数 </span><br><span class="line">* @param in </span><br><span class="line">*/  </span><br><span class="line">private static void showAvailableBytes(InputStream in)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">System.out.println(&quot;当前字节输入流中的字节数为:&quot; + in.available());  </span><br><span class="line">&#125; catch (IOException e) &#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">public static void main(String[] args) &#123;  </span><br><span class="line">String fileName = &quot;C:/temp/newTemp.txt&quot;;  </span><br><span class="line">ReadFromFile.readFileByBytes(fileName);  </span><br><span class="line">ReadFromFile.readFileByChars(fileName);  </span><br><span class="line">ReadFromFile.readFileByLines(fileName);  </span><br><span class="line">ReadFromFile.readFileByRandomAccess(fileName);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="二、将内容追加到文件尾部"><a href="#二、将内容追加到文件尾部" class="headerlink" title="二、将内容追加到文件尾部"></a>二、将内容追加到文件尾部</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import java.io.FileWriter;  </span><br><span class="line">import java.io.IOException;  </span><br><span class="line">import java.io.RandomAccessFile;  </span><br><span class="line">/** </span><br><span class="line">* 将内容追加到文件尾部 </span><br><span class="line">*/  </span><br><span class="line">public class AppendToFile &#123;  </span><br><span class="line">/** </span><br><span class="line">* A方法追加文件：使用RandomAccessFile </span><br><span class="line">* @param fileName 文件名 </span><br><span class="line">* @param content 追加的内容 </span><br><span class="line">*/  </span><br><span class="line">public static void appendMethodA(String fileName,  </span><br><span class="line">  </span><br><span class="line">String content)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">// 打开一个随机访问文件流，按读写方式  </span><br><span class="line">RandomAccessFile randomFile = new RandomAccessFile(fileName, &quot;rw&quot;);  </span><br><span class="line">// 文件长度，字节数  </span><br><span class="line">long fileLength = randomFile.length();  </span><br><span class="line">//将写文件指针移到文件尾。  </span><br><span class="line">randomFile.seek(fileLength);  </span><br><span class="line">randomFile.writeBytes(content);  </span><br><span class="line">randomFile.close();  </span><br><span class="line">&#125; catch (IOException e)&#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">/** </span><br><span class="line">* B方法追加文件：使用FileWriter </span><br><span class="line">* @param fileName </span><br><span class="line">* @param content </span><br><span class="line">*/  </span><br><span class="line">public static void appendMethodB(String fileName, String content)&#123;  </span><br><span class="line">try &#123;  </span><br><span class="line">//打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件  </span><br><span class="line">FileWriter writer = new FileWriter(fileName, true);  </span><br><span class="line">writer.write(content);  </span><br><span class="line">writer.close();  </span><br><span class="line">&#125; catch (IOException e) &#123;  </span><br><span class="line">e.printStackTrace();  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;  </span><br><span class="line">public static void main(String[] args) &#123;  </span><br><span class="line">String fileName = &quot;C:/temp/newTemp.txt&quot;;  </span><br><span class="line">String content = &quot;new append!&quot;;  </span><br><span class="line">//按方法A追加文件  </span><br><span class="line">AppendToFile.appendMethodA(fileName, content);  </span><br><span class="line">AppendToFile.appendMethodA(fileName, &quot;append end. n&quot;);  </span><br><span class="line">//显示文件内容  </span><br><span class="line">ReadFromFile.readFileByLines(fileName);  </span><br><span class="line">//按方法B追加文件  </span><br><span class="line">AppendToFile.appendMethodB(fileName, content);  </span><br><span class="line">AppendToFile.appendMethodB(fileName, &quot;append end. n&quot;);  </span><br><span class="line">//显示文件内容  </span><br><span class="line">ReadFromFile.readFileByLines(fileName);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://blog.csdn.net/smartcat86/article/details/4085739" target="_blank" rel="noopener">来源</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java文件读写/" rel="tag">#java文件读写</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/14/Java多态理解/" rel="next" title="Java多态理解">
+                <i class="fa fa-chevron-left"></i> Java多态理解
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/14/Log4j使用总结/" rel="prev" title="Log4j使用总结">
+                Log4j使用总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/14/java读写文件大全/"
+           data-title="java读写文件大全" data-url="https://chasgao.github.io/2016/12/14/java读写文件大全/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/53.jpg"
+               alt="Chas Gao" />
+          <p class="site-author-name" itemprop="name">Chas Gao</p>
+          <p class="site-description motion-element" itemprop="description">Just do it !</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ChasGao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#java中多种方式读文件"><span class="nav-number">1.</span> <span class="nav-text">java中多种方式读文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、多种方式读文件内容。"><span class="nav-number">1.0.1.</span> <span class="nav-text">一、多种方式读文件内容。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、将内容追加到文件尾部"><span class="nav-number">1.0.2.</span> <span class="nav-text">二、将内容追加到文件尾部</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chas Gao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"chasgao"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

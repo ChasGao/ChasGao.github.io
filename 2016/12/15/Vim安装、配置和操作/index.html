@@ -1,0 +1,855 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Vim," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chas Gao's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Vim 介绍  Vim 官网：http://www.vim.orgVim 安装    CentOS：sudo yum install -y vim Ubuntu：sudo apt-get install -y vim Windows GVim 下载：http://www.xiazaiba.com/html/3347.htmlVim 配置（CentOS 环境）    编辑配置文件是：sudo vim">
+<meta name="keywords" content="Vim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim安装、配置和操作">
+<meta property="og:url" content="https://chasgao.github.io/2016/12/15/Vim安装、配置和操作/index.html">
+<meta property="og:site_name" content="Chas Gao&#39;s Blog">
+<meta property="og:description" content="Vim 介绍  Vim 官网：http://www.vim.orgVim 安装    CentOS：sudo yum install -y vim Ubuntu：sudo apt-get install -y vim Windows GVim 下载：http://www.xiazaiba.com/html/3347.htmlVim 配置（CentOS 环境）    编辑配置文件是：sudo vim">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-21T08:17:36.910Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vim安装、配置和操作">
+<meta name="twitter:description" content="Vim 介绍  Vim 官网：http://www.vim.orgVim 安装    CentOS：sudo yum install -y vim Ubuntu：sudo apt-get install -y vim Windows GVim 下载：http://www.xiazaiba.com/html/3347.htmlVim 配置（CentOS 环境）    编辑配置文件是：sudo vim">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://chasgao.github.io/2016/12/15/Vim安装、配置和操作/"/>
+
+  <title> Vim安装、配置和操作 | Chas Gao's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2a93c0137a5582707891d03897b1f595";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chas Gao's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Share Note</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pN-fusxNozugfk_F1DZM','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-tags " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Vim安装、配置和操作
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-15T00:33:24+08:00" content="2016-12-15">
+              2016-12-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/15/Vim安装、配置和操作/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/15/Vim安装、配置和操作/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Vim-介绍"><a href="#Vim-介绍" class="headerlink" title="Vim 介绍"></a>Vim 介绍</h3><hr>
+<ul>
+<li>Vim 官网：<a href="http://www.vim.org" target="_blank" rel="noopener">http://www.vim.org</a><h3 id="Vim-安装"><a href="#Vim-安装" class="headerlink" title="Vim 安装"></a>Vim 安装</h3></li>
+</ul>
+<hr>
+<ul>
+<li>CentOS：sudo yum install -y vim</li>
+<li>Ubuntu：sudo apt-get install -y vim</li>
+<li>Windows GVim 下载：<a href="http://www.xiazaiba.com/html/3347.html" target="_blank" rel="noopener">http://www.xiazaiba.com/html/3347.html</a><h3 id="Vim-配置（CentOS-环境）"><a href="#Vim-配置（CentOS-环境）" class="headerlink" title="Vim 配置（CentOS 环境）"></a>Vim 配置（CentOS 环境）</h3></li>
+</ul>
+<hr>
+<ul>
+<li>编辑配置文件是：sudo vim /etc/vimrc<h3 id="Vim-基础快捷键"><a href="#Vim-基础快捷键" class="headerlink" title="Vim 基础快捷键"></a>Vim 基础快捷键</h3></li>
+</ul>
+<hr>
+<ul>
+<li>注意  <ul>
+<li>严格区分字母大小写</li>
+<li>含有 Ctrl 字眼都表示 Ctrl 键盘按钮</li>
+<li>特定符号需要配合 Shift 键，比如字母键盘区上面的数字区：!@#%%^&amp;*()</li>
+<li>要按出冒号键 : 也是需要 Shift 的</li>
+</ul>
+</li>
+<li>移动<ul>
+<li>j，下</li>
+<li>k，上</li>
+<li>h，左</li>
+<li>l，右</li>
+<li>v，按 v 之后按方向键可以选中你要选中的文字</li>
+<li>gg，跳到第 1 行</li>
+<li>G，跳到第最后行</li>
+<li>16G 或 :16，跳到第 16 行</li>
+<li>$，到本行 行尾</li>
+<li>0，到本行 行头</li>
+<li>w，到下一个单词的 开头</li>
+<li>e，到下一个单词的 结尾</li>
+<li>Ctrl + u，向文件 首翻 半屏</li>
+<li>Ctrl + d，向文件 尾翻 半屏</li>
+<li>Ctrl + f，向文件 尾翻 一屏</li>
+<li>Ctrl + b，向文件 首翻 一屏</li>
+<li>*，匹配光标当前所在的单词，移动光标到 下一个 匹配单词</li>
+<li>#，匹配光标当前所在的单词，移动光标到 上一个 匹配单词</li>
+<li>^，到本行第一个单词头</li>
+<li>g_，到本行最后一个单词尾巴</li>
+<li>%，匹配括号移动，包括 (、{、[</li>
+</ul>
+</li>
+<li>插入<ul>
+<li>I，在当前 行首 插入</li>
+<li>A，在当前 行尾 插入</li>
+<li>i，在当前字符的 左边 插入</li>
+<li>a，在当前字符的 右边 插入</li>
+<li>o，在当前行 下面 插入一个新行</li>
+<li>O，在当前行 上面 插入一个新行</li>
+</ul>
+</li>
+<li>编辑<ul>
+<li>删除<ul>
+<li>x，删除 光标后 的 1 个字符</li>
+<li>2x，删除 光标后 的 2 个字符</li>
+<li>X，删除 光标前 的 1 个字符</li>
+<li>2X，删除 光标前 的 2 个字符</li>
+<li>dd，删除当前行</li>
+<li>cc，删除当前行后进入 insert 模式</li>
+<li>dw，删除当前光标下的单词/空格</li>
+<li>d$，删除光标至 行尾 所有字符</li>
+<li>dG，删除光标至 文件尾 所有字符</li>
+<li>3dd，从当前光标开始，删掉 3 行</li>
+</ul>
+</li>
+<li>复制<ul>
+<li>y，复制光标所选字符</li>
+<li>yw，复制光标后单词</li>
+<li>yy，复制当前行</li>
+<li>4yy，复制当前行及下面 4 行</li>
+<li>y$，复制光标位置至 行尾 的内容</li>
+<li>y^，复制光标位置至 行首 的内容</li>
+</ul>
+</li>
+<li>粘贴<ul>
+<li>p，将粘贴板中内容复制到 光标之后</li>
+<li>P，将粘贴板中内容复制到 光标之前</li>
+</ul>
+</li>
+<li>其他<ul>
+<li>ddp，交换当前光标所在行和下一行的位置</li>
+<li>u，撤销</li>
+<li>:wq，退出并 保存</li>
+<li>:q!，退出并 不保存</li>
+<li>Ctrl + v，进入 Vim 列编辑</li>
+<li>guu，把当前行的字母全部转换成 小写</li>
+<li>gUU，把当前行的字母全部转换成 大写</li>
+<li>g~~，把当前行的字母是大写的转换成小写，是小写的转换成大写</li>
+<li>:saveas /opt/setups/text.txt，另存到 /opt/setups/text.txt</li>
+</ul>
+</li>
+<li>搜索<ul>
+<li>/YouMeek，从光标开始处向文件尾搜索 YouMeek 字符，按 n 继续向下找，按 N 继续向上找</li>
+<li>?YouMeek，从光标开始处向文件首搜索 YouMeek 字符，按 n 继续向下找，按 N 继续向上找</li>
+</ul>
+</li>
+<li>替换<ul>
+<li>:%s/YouMeek/Judasn/g，把文件中所有 YouMeek 替换为：Judasn</li>
+<li>:%s/YouMeek/Judasn/，把文件中所有行中第一个 YouMeek 替换为：Judasn</li>
+<li>:s/YouMeek/Judasn/，把光标当前行第一个 YouMeek 替换为 Judasn</li>
+<li>:s/YouMeek/Judasn/g，把光标当前行所有 YouMeek 替换为 Judasn</li>
+<li>:s#YouMeek/#Judasn/#，除了使用斜杠作为分隔符之外，还可以使用 # 作为分隔符，此时中间出现的 / 不会作为分隔符，该命令表示：把光标当前行第一个 YouMeek/ 替换为 Judasn/</li>
+<li>:10,31s/YouMeek/Judasng，把第 10 行到 31 行之间所有 YouMeek 替换为 Judasn<h3 id="Vim-的特殊复制、黏贴"><a href="#Vim-的特殊复制、黏贴" class="headerlink" title="Vim 的特殊复制、黏贴"></a>Vim 的特殊复制、黏贴</h3></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Vim 提供了 12 个剪贴板，分别是：0,1,2,3,4,5,6,7,8,9,a,”，默认采用的是 “，也就是双引号，可能你初读感觉很奇怪。你可以用 Vim 编辑某个文件，然后输入：:reg。你可以看到如下内容：</li>
+</ul>
+<ul>
+<li>vim复制到某个剪切板的命令：”7y，表示使用 7 号剪切板。</li>
+<li>黏贴某个剪切板内容：”7p，表示使用 7 号剪切板内容进行黏贴</li>
+</ul>
+<h3 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h3><hr>
+<ul>
+<li><a href="http://blogread.cn/it/article/1010?f=sa" target="_blank" rel="noopener">vim几个小技巧（批量替换，列编辑）</a></li>
+<li><a href="http://www.2maomao.com/blog/wp-content/uploads/vim_tips.txt" target="_blank" rel="noopener">最佳vim技巧</a></li>
+<li><a href="http://coolshell.cn/articles/5426.html" target="_blank" rel="noopener">简明 Vim 练级攻略</a></li>
+<li><a href="http://blog.csdn.net/wangchong0/article/details/6801956" target="_blank" rel="noopener">vim 批量查找替换</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Vim/" rel="tag">#Vim</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/14/Log4j使用总结/" rel="next" title="Log4j使用总结">
+                <i class="fa fa-chevron-left"></i> Log4j使用总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/15/PreparingInterview/" rel="prev" title="PreparingInterview">
+                PreparingInterview <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/15/Vim安装、配置和操作/"
+           data-title="Vim安装、配置和操作" data-url="https://chasgao.github.io/2016/12/15/Vim安装、配置和操作/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/53.jpg"
+               alt="Chas Gao" />
+          <p class="site-author-name" itemprop="name">Chas Gao</p>
+          <p class="site-description motion-element" itemprop="description">Just do it !</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ChasGao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-介绍"><span class="nav-number">1.</span> <span class="nav-text">Vim 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-安装"><span class="nav-number">2.</span> <span class="nav-text">Vim 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-配置（CentOS-环境）"><span class="nav-number">3.</span> <span class="nav-text">Vim 配置（CentOS 环境）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-基础快捷键"><span class="nav-number">4.</span> <span class="nav-text">Vim 基础快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-的特殊复制、黏贴"><span class="nav-number">5.</span> <span class="nav-text">Vim 的特殊复制、黏贴</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资料"><span class="nav-number">6.</span> <span class="nav-text">资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chas Gao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"chasgao"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

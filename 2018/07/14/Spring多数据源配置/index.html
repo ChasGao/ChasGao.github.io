@@ -1,0 +1,763 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Spring多数据源配置," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chas Gao's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="继承Spring的AbstractRoutingDataSource来实现多数据源配置  数据源配置 &amp;lt;!-- 数据库连接池配置 --&amp;gt; &amp;lt;bean id=&quot;dataSourceTask&quot; name=&quot;dataSourceTask&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;&amp;gt;  	&amp;lt;!-- 指定连接数据库的驱动">
+<meta name="keywords" content="Spring多数据源配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring多数据源配置">
+<meta property="og:url" content="https://chasgao.github.io/2018/07/14/Spring多数据源配置/index.html">
+<meta property="og:site_name" content="Chas Gao&#39;s Blog">
+<meta property="og:description" content="继承Spring的AbstractRoutingDataSource来实现多数据源配置  数据源配置 &amp;lt;!-- 数据库连接池配置 --&amp;gt; &amp;lt;bean id=&quot;dataSourceTask&quot; name=&quot;dataSourceTask&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;&amp;gt;  	&amp;lt;!-- 指定连接数据库的驱动">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-21T08:55:47.629Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring多数据源配置">
+<meta name="twitter:description" content="继承Spring的AbstractRoutingDataSource来实现多数据源配置  数据源配置 &amp;lt;!-- 数据库连接池配置 --&amp;gt; &amp;lt;bean id=&quot;dataSourceTask&quot; name=&quot;dataSourceTask&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;&amp;gt;  	&amp;lt;!-- 指定连接数据库的驱动">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://chasgao.github.io/2018/07/14/Spring多数据源配置/"/>
+
+  <title> Spring多数据源配置 | Chas Gao's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2a93c0137a5582707891d03897b1f595";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chas Gao's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Share Note</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pN-fusxNozugfk_F1DZM','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring多数据源配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-14T18:10:45+08:00" content="2018-07-14">
+              2018-07-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/07/14/Spring多数据源配置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/14/Spring多数据源配置/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>继承Spring的AbstractRoutingDataSource来实现多数据源配置</p>
+<ol>
+<li><p>数据源配置</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 数据库连接池配置 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceTask"</span> <span class="attr">name</span>=<span class="string">"dataSourceTask"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">		而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">name</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">		而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">	<span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义一个类继承AbstractRoutingDataSource实现determineCurrentLookupKey方法，来实现数据库的动态切换</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.core;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment">* ClassName: DynamicDataSource &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* Function: 扩展Spring的AbstractRoutingDataSource抽象类，实现动态数据源. &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* date: 2017年3月15日 下午10:23:52 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> JohnFNash </span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> JDK 1.6</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DynamicDataSource</span> <span class="keyword">extends</span> <span class="title">AbstractRoutingDataSource</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">determineCurrentLookupKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 从自定义的位置获取数据源标识</span></span><br><span class="line">		<span class="keyword">return</span> DynamicDataSourceHolder.getDatasource();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>定义工具类，用于动态切换数据源</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.core;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment">* ClassName: DatabaseContextHolder &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* Function: 当前线程中使用的数据源标识 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* date: 2017年3月15日 下午10:10:17 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> JohnFNash </span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> JDK 1.6</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DynamicDataSourceHolder</span> </span>&#123;</span><br><span class="line">	<span class="comment">/** 数据源标识保存在线程变量中，避免多线程操作数据源时互相干扰 */</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;String&gt; contextHolder = <span class="keyword">new</span> ThreadLocal&lt;String&gt;();</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 设置数据源名称</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> dastsource 数据源名称</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setDatasource</span><span class="params">(String datasource)</span> </span>&#123;</span><br><span class="line">		contextHolder.set(datasource);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 获取数据源名称</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> 数据源名称</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getDatasource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> contextHolder.get();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 清除标志</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">clearDatasource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		contextHolder.remove();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>在数据库配置文件中添加如下配置</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 动态数据源配置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSource"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSource"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetDataSources"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">map</span> <span class="attr">key-type</span>=<span class="string">"java.lang.String"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceTask"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceTask"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"defaultTargetDataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">&lt;!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"sqlSessionFactory"</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.SqlSessionFactoryBean"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 自动扫描mapping.xml文件 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"mapperLocations"</span> <span class="attr">value</span>=<span class="string">"classpath:/mapper_*/*.xml"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- DAO接口所在包名，Spring会自动查找其下的类 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.mapper.MapperScannerConfigurer"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basePackage"</span> <span class="attr">value</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.dao"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"sqlSessionFactoryBeanName"</span> <span class="attr">value</span>=<span class="string">"sqlSessionFactory"</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 配置事物管理器 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"transactionManager"</span> <span class="attr">class</span>=<span class="string">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 拦截器方式配置事物 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">tx:advice</span> <span class="attr">id</span>=<span class="string">"transactionAdvice"</span> <span class="attr">transaction-manager</span>=<span class="string">"transactionManager"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tx:attributes</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"add*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"insert*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"update*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"delete*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"get*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"find*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"select*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tx:attributes</span>&gt;</span>     	</span><br><span class="line"> <span class="tag">&lt;/<span class="name">tx:advice</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- spring aop事物管理 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"transactionPointcut"</span> </span></span><br><span class="line"><span class="tag">        <span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service..*Impl.*(..))"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">aop:advisor</span> <span class="attr">pointcut-ref</span>=<span class="string">"transactionPointcut"</span> <span class="attr">advice-ref</span>=<span class="string">"transactionAdvice"</span> <span class="attr">order</span>=<span class="string">"2"</span>/&gt;</span>    </span><br><span class="line"> <span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>到目前为止，动态数据源的配置以及OK，不过还不能实现动态切换，下面将介绍</p>
+<ol start="5">
+<li>数据源动态切换</li>
+</ol>
+<p>1） 方式一： 定义切面，设置切面在数据库事物开启前作用，切换数据源<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.core;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment">* ClassName: DynamicDataSourceInterceptor &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* Function: 数据源动态切换拦截器. &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* date: 2017年3月15日 下午10:28:17 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> JohnFNash </span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> JDK 1.6</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DynamicDataSourceInterceptor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** 切换到数据源1 */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDS1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	DynamicDataSourceHolder.setDataSource(<span class="string">"dataSourceTask"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line">    <span class="comment">/** 切换到数据源2 */</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDS2</span><span class="params">()</span> </span>&#123; </span><br><span class="line">      DynamicDataSourceHolder.setDataSource(<span class="string">"dataSourceEnv"</span>); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>配置切面，进行数据源动态切换<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 数据源动态切换实体 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSourceInterceptor"</span>/&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">&lt;!-- 数据源动态切换切面配置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">aop:aspect</span> <span class="attr">id</span>=<span class="string">"dataSourceAspect"</span> <span class="attr">ref</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">order</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 拦截所有service实现类的方法 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcutTask"</span> </span></span><br><span class="line"><span class="tag">		<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service.task.*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcutTask"</span> <span class="attr">method</span>=<span class="string">"setDS1"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcutEnv"</span> </span></span><br><span class="line"><span class="tag">		<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service.env.*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcutEnv"</span> <span class="attr">method</span>=<span class="string">"setDS2"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">aop:aspect</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>注意，需要将数据源动态切换的切面的执行顺序设置为1，将数据库事物管理的执行顺序设置为2，在数据库</p>
+<p>事物开启前进行数据源切换</p>
+<p>至此，方式一 多个数据源配置以及数据源动态切换功能已经实现，完整配置如下<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tx</span>=<span class="string">"http://www.springframework.org/schema/tx"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:aop</span>=<span class="string">"http://www.springframework.org/schema/aop"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"  </span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  </span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"</span>&gt;</span></span><br><span class="line">     <span class="comment">&lt;!-- 数据库连接池配置 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceTask"</span> <span class="attr">name</span>=<span class="string">"dataSourceTask"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">        	而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">name</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">        	而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSource"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSource"</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetDataSources"</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">map</span> <span class="attr">key-type</span>=<span class="string">"java.lang.String"</span>&gt;</span></span><br><span class="line">    			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceTask"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceTask"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"defaultTargetDataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"sqlSessionFactory"</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.SqlSessionFactoryBean"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line">     	<span class="comment">&lt;!-- 自动扫描mapping.xml文件 --&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"mapperLocations"</span> <span class="attr">value</span>=<span class="string">"classpath:/mapper_*/*.xml"</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- DAO接口所在包名，Spring会自动查找其下的类 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.mapper.MapperScannerConfigurer"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basePackage"</span> <span class="attr">value</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.dao"</span> /&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"sqlSessionFactoryBeanName"</span> <span class="attr">value</span>=<span class="string">"sqlSessionFactory"</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 配置事物管理器 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"transactionManager"</span> <span class="attr">class</span>=<span class="string">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 拦截器方式配置事物 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">tx:advice</span> <span class="attr">id</span>=<span class="string">"transactionAdvice"</span> <span class="attr">transaction-manager</span>=<span class="string">"transactionManager"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:attributes</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"add*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"insert*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"update*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"delete*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			</span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"get*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"find*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"select*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">tx:attributes</span>&gt;</span>     	</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tx:advice</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- spring aop事物管理 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"transactionPointcut"</span> </span></span><br><span class="line"><span class="tag">     			<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service..*Impl.*(..))"</span> /&gt;</span></span><br><span class="line">     		<span class="tag">&lt;<span class="name">aop:advisor</span> <span class="attr">pointcut-ref</span>=<span class="string">"transactionPointcut"</span> <span class="attr">advice-ref</span>=<span class="string">"transactionAdvice"</span> <span class="attr">order</span>=<span class="string">"2"</span>/&gt;</span></span><br><span class="line">     		<span class="comment">&lt;!-- &lt;aop:advisor pointcut-ref="transactionPointcut" advice-ref="dataSourceInterceptor" order="1"/&gt; --&gt;</span>     	</span><br><span class="line">     <span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 数据源动态切换切面配置 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">	 <span class="tag">&lt;<span class="name">aop:aspect</span> <span class="attr">id</span>=<span class="string">"dataSourceAspect"</span> <span class="attr">ref</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">order</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcutTask"</span> </span></span><br><span class="line"><span class="tag">            	<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service.task.*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcutTask"</span> <span class="attr">method</span>=<span class="string">"setDS1"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcutEnv"</span> </span></span><br><span class="line"><span class="tag">            	<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service.env.*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcutEnv"</span> <span class="attr">method</span>=<span class="string">"setDS2"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">aop:aspect</span>&gt;</span></span><br><span class="line">	 <span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 数据源动态切换实体 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSourceInterceptor"</span>/&gt;</span>    </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>2）方式二：定义注解，通过注解的值来获取当前数据源，并进行切换</p>
+<p>定义注解，作用于类和方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.core;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.ElementType;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"> </span><br><span class="line"><span class="meta">@Target</span>(&#123; ElementType.TYPE, ElementType.METHOD&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> DataSource &#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义拦截器，解析注解切换数据源<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.core;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.JoinPoint;</span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.reflect.MethodSignature;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment">* ClassName: DynamicDataSourceInterceptor &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* Function: 数据源动态切换拦截器. &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* date: 2017年3月15日 下午10:28:17 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> JohnFNash </span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> JDK 1.6</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DynamicDataSourceInterceptor</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 拦截目标方法，获取由<span class="doctag">@DataSource</span>指定的数据源标识，设置到线程存储中以便切换数据源</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> point</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">intercept</span><span class="params">(JoinPoint point)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Class&lt;?&gt; target = point.getTarget().getClass();</span><br><span class="line">        MethodSignature signature = (MethodSignature) point.getSignature();</span><br><span class="line">        resolveDataSource(target, signature.getMethod());</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 提取目标对象方法注解和类型注解中的数据源标识</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clazz</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">resolveDataSource</span><span class="params">(Class&lt;?&gt; clazz, Method method)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class&lt;?&gt;[] types = method.getParameterTypes();</span><br><span class="line">            <span class="comment">// 默认使用类型注解</span></span><br><span class="line">            <span class="keyword">if</span> (clazz.isAnnotationPresent(DataSource.class)) &#123;</span><br><span class="line">                DataSource source = clazz.getAnnotation(DataSource.class);</span><br><span class="line">                DynamicDataSourceHolder.setDataSource(source.value());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 方法注解可以覆盖类型注解</span></span><br><span class="line">            Method m = clazz.getMethod(method.getName(), types);</span><br><span class="line">            <span class="keyword">if</span> (m != <span class="keyword">null</span> &amp;&amp; m.isAnnotationPresent(DataSource.class)) &#123;</span><br><span class="line">                DataSource source = m.getAnnotation(DataSource.class);</span><br><span class="line">                DynamicDataSourceHolder.setDataSource(source.value());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在配置文件中配置切面，实现数据源动态切换<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 数据源动态切换切面配置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">aop:aspect</span> <span class="attr">id</span>=<span class="string">"dataSourceAspect"</span> <span class="attr">ref</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">order</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- 拦截所有service实现类的方法 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcut"</span> </span></span><br><span class="line"><span class="tag">		<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service..*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcut"</span> <span class="attr">method</span>=<span class="string">"intercept"</span> /&gt;</span>	</span><br><span class="line"><span class="tag">&lt;/<span class="name">aop:aspect</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">&lt;!-- 数据源动态切换实体 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSourceInterceptor"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>注意：设置执行顺序为1，并使用 aop:before 在数据库事物开启前进行数据源切换<br>至此，方式二 多个数据源配置以及数据源动态切换功能已经实现，完整配置如下<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:tx</span>=<span class="string">"http://www.springframework.org/schema/tx"</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:aop</span>=<span class="string">"http://www.springframework.org/schema/aop"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"  </span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  </span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"</span>&gt;</span></span><br><span class="line">     <span class="comment">&lt;!-- 数据库连接池配置 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceTask"</span> <span class="attr">name</span>=<span class="string">"dataSourceTask"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">        	而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.task.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">name</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">class</span>=<span class="string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的驱动--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.driverClassName&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的URL--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.url&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的用户名--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.user&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接数据库的密码--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.password&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最大连接数. Default:15--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池中保留的最小连接数--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.minPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 指定连接池的初始化连接数  取值应在minPoolSize 与 maxPoolSize 之间.Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.initialPoolSize&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。 Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxIdleTime&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数. Default:3--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"acquireIncrement"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.acquireIncrement&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- JDBC的标准,用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection</span></span><br><span class="line"><span class="comment">        	而不是整个连接池所以设置这个参数需要考虑到多方面的因数.如果maxStatements与maxStatementsPerConnection均为0,则缓存被关闭。Default:0--&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.maxStatements&#125;"</span>/&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 每60秒检查所有连接池中的空闲连接.Default:0 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.idleConnectionTestPeriod&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--连接池获取新连接的时间，超时后将 抛出SQLException,如设为0则无限期等待。单位毫秒。Default: 0 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span> <span class="attr">value</span>=<span class="string">"$&#123;db.lcmyw.jdbc.checkoutTimeout&#125;"</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSource"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSource"</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"targetDataSources"</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">map</span> <span class="attr">key-type</span>=<span class="string">"java.lang.String"</span>&gt;</span></span><br><span class="line">    			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceTask"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceTask"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"dataSourceEnv"</span> <span class="attr">value-ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"defaultTargetDataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSourceEnv"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"sqlSessionFactory"</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.SqlSessionFactoryBean"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line">     	<span class="comment">&lt;!-- 自动扫描mapping.xml文件 --&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"mapperLocations"</span> <span class="attr">value</span>=<span class="string">"classpath:/mapper_*/*.xml"</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- DAO接口所在包名，Spring会自动查找其下的类 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.mybatis.spring.mapper.MapperScannerConfigurer"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basePackage"</span> <span class="attr">value</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.dao"</span> /&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"sqlSessionFactoryBeanName"</span> <span class="attr">value</span>=<span class="string">"sqlSessionFactory"</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 配置事物管理器 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"transactionManager"</span> <span class="attr">class</span>=<span class="string">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span> /&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 拦截器方式配置事物 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">tx:advice</span> <span class="attr">id</span>=<span class="string">"transactionAdvice"</span> <span class="attr">transaction-manager</span>=<span class="string">"transactionManager"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">tx:attributes</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"add*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"insert*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"update*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"delete*"</span> <span class="attr">propagation</span>=<span class="string">"REQUIRED"</span> /&gt;</span></span><br><span class="line">			</span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"get*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"find*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">tx:method</span> <span class="attr">name</span>=<span class="string">"select*"</span> <span class="attr">propagation</span>=<span class="string">"SUPPORTS"</span> <span class="attr">read-only</span>=<span class="string">"true"</span> /&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">tx:attributes</span>&gt;</span>     	</span><br><span class="line">     <span class="tag">&lt;/<span class="name">tx:advice</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- spring aop事物管理 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"transactionPointcut"</span> </span></span><br><span class="line"><span class="tag">     			<span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service..*Impl.*(..))"</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 设置order的值为2，使得数据库事物开启在数据源切换之后，否则数据源切换不会达到效果  --&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">aop:advisor</span> <span class="attr">pointcut-ref</span>=<span class="string">"transactionPointcut"</span> <span class="attr">advice-ref</span>=<span class="string">"transactionAdvice"</span> <span class="attr">order</span>=<span class="string">"2"</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 数据源动态切换切面配置 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">	    <span class="tag">&lt;<span class="name">aop:aspect</span> <span class="attr">id</span>=<span class="string">"dataSourceAspect"</span> <span class="attr">ref</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">order</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">			<span class="comment">&lt;!-- 拦截所有service实现类的方法 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">"dataSourcePointcut"</span> </span></span><br><span class="line"><span class="tag">            	     <span class="attr">expression</span>=<span class="string">"execution(* com.johnfnash.learn.pro.dashboardserver.service..*Impl.*(..))"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">pointcut-ref</span>=<span class="string">"dataSourcePointcut"</span> <span class="attr">method</span>=<span class="string">"intercept"</span> /&gt;</span>           </span><br><span class="line">	    <span class="tag">&lt;/<span class="name">aop:aspect</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">&lt;!-- 数据源动态切换实体 --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"dataSourceInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.johnfnash.learn.pro.dashboardserver.core.DynamicDataSourceInterceptor"</span>/&gt;</span></span><br><span class="line">     </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>@DataSource注解使用示例:<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.johnfnash.learn.pro.dashboardserver.service.env;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> com.johnfnash.learn.pro.dashboardserver.core.DataSource;</span><br><span class="line"><span class="keyword">import</span> com.johnfnash.learn.pro.dashboardserver.dao.env.TaskInfoMapper;</span><br><span class="line"><span class="keyword">import</span> com.johnfnash.learn.pro.dashboardserver.domain.TaskInfo;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment">* ClassName: FactTskServiceImpl &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* Function: 任务信息业务逻辑操作实现类 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* date: 2017年3月8日 下午10:09:46 &lt;br/&gt; </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> JohnFNash </span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> JDK 1.6</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Service</span>(<span class="string">"taskInfoService"</span>)</span><br><span class="line"><span class="meta">@DataSource</span>(<span class="string">"dataSourceEnv"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskInfoServiceImpl</span> <span class="keyword">implements</span> <span class="title">TaskInfoService</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> TaskInfoMapper taskInfoMapper;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">insertTasks</span><span class="params">(List&lt;TaskInfo&gt; tasks)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> taskInfoMapper.insertTasks(tasks);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">updateTaskControlStatus</span><span class="params">(Map&lt;String, Object&gt; params)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> taskInfoMapper.updateTaskControlStatus(params);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">updateTaskControlTimestamp</span><span class="params">(Map&lt;String, Object&gt; params)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> taskInfoMapper.updateTaskControlTimestamp(params);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getTaskControlInfo</span><span class="params">(Map&lt;String, Object&gt; params)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> taskInfoMapper.getTaskControlInfo(params);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面 @DataSource 注解是定义在类上的，也可以定义在方法上，方法上定义的注解优先级高于定义在类上的注解<br>方式一与方式二对比：</p>
+<p>方式一，需要为每个数据源service层单独建一个包，一个Service只能使用一个数据源</p>
+<p>方式二，不需要为每个数据源service层单独建一个包，一个Service可以使用多个数据源</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring多数据源配置/" rel="tag">#Spring多数据源配置</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/10/mysql中delete的语法别名问题/" rel="next" title="mysql中delete的语法别名问题">
+                <i class="fa fa-chevron-left"></i> mysql中delete的语法别名问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/24/RequireJS/" rel="prev" title="RequireJS">
+                RequireJS <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/07/14/Spring多数据源配置/"
+           data-title="Spring多数据源配置" data-url="https://chasgao.github.io/2018/07/14/Spring多数据源配置/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/53.jpg"
+               alt="Chas Gao" />
+          <p class="site-author-name" itemprop="name">Chas Gao</p>
+          <p class="site-description motion-element" itemprop="description">Just do it !</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ChasGao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chas Gao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"chasgao"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

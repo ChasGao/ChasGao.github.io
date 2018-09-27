@@ -1,0 +1,851 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="系统设计," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Chas Gao's Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="基础技术框架struts2+spring+mybatis的一个集成框架，是目前较流行的一种Web应用程序开源框架,集成SSM框架的系统从职责上分为四层：表示层、业务逻辑层、数据持久层和域模块层，以帮助开发人员在短期内搭建结构清晰、可复用性好、维护方便的Web应用程序  存储系统Redis是一个基于内存的存储系统，具备非常高的读写性能，可以将频繁访问的热点数据存储于Redis中，直接请求Redis服">
+<meta name="keywords" content="系统设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统设计">
+<meta property="og:url" content="https://chasgao.github.io/2018/09/26/在线系统设计/index.html">
+<meta property="og:site_name" content="Chas Gao&#39;s Blog">
+<meta property="og:description" content="基础技术框架struts2+spring+mybatis的一个集成框架，是目前较流行的一种Web应用程序开源框架,集成SSM框架的系统从职责上分为四层：表示层、业务逻辑层、数据持久层和域模块层，以帮助开发人员在短期内搭建结构清晰、可复用性好、维护方便的Web应用程序  存储系统Redis是一个基于内存的存储系统，具备非常高的读写性能，可以将频繁访问的热点数据存储于Redis中，直接请求Redis服">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-27T09:06:15.939Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="系统设计">
+<meta name="twitter:description" content="基础技术框架struts2+spring+mybatis的一个集成框架，是目前较流行的一种Web应用程序开源框架,集成SSM框架的系统从职责上分为四层：表示层、业务逻辑层、数据持久层和域模块层，以帮助开发人员在短期内搭建结构清晰、可复用性好、维护方便的Web应用程序  存储系统Redis是一个基于内存的存储系统，具备非常高的读写性能，可以将频繁访问的热点数据存储于Redis中，直接请求Redis服">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://chasgao.github.io/2018/09/26/在线系统设计/"/>
+
+  <title> 系统设计 | Chas Gao's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2a93c0137a5582707891d03897b1f595";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Chas Gao's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Share Note</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'pN-fusxNozugfk_F1DZM','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                系统设计
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-09-26T18:14:45+08:00" content="2018-09-26">
+              2018-09-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/系统设计/" itemprop="url" rel="index">
+                    <span itemprop="name">系统设计</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/09/26/在线系统设计/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/09/26/在线系统设计/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="基础技术框架"><a href="#基础技术框架" class="headerlink" title="基础技术框架"></a>基础技术框架</h5><p>struts2+spring+mybatis的一个集成框架，是目前较流行的一种Web应用程序开源框架,集成SSM框架的系统从职责上分为四层：表示层、业务逻辑层、数据持久层和域模块层，以帮助开发人员在短期内搭建结构清晰、可复用性好、维护方便的Web应用程序</p>
+<hr>
+<h5 id="存储系统"><a href="#存储系统" class="headerlink" title="存储系统"></a>存储系统</h5><p>Redis是一个基于内存的存储系统，具备非常高的读写性能，可以将频繁访问的热点数据存储于Redis中，直接请求Redis服务器读写数据，以降低数据库压力，同时提高数据响应效率。</p>
+<ol>
+<li>Redis优点：</li>
+</ol>
+<ul>
+<li>提供多种数据结构的支持, 五种数据类型：string，hash，list，set及zset(sorted set)</li>
+<li>支持数据的备份，即master-slave模式的数据备份</li>
+<li>支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用</li>
+<li>线程安全</li>
+<li>从3.0.0版本支持集群部署</li>
+</ul>
+<ol start="2">
+<li>涉及业务场景</li>
+</ol>
+<ul>
+<li>业务表主键生成，通过Redis来控制并发数据插入，使用毫秒级时间戳+6位随机码来生成主键</li>
+<li>存储频繁访问的系统配置类数据及热点业务数据，如接口配置、订单数据、商品数据等</li>
+<li>流量控制，为保证系统不被外围系统大并发请求，拖垮生产系统，通过使用Redis对请求量进行限制，保证系统在安全承载能力范围</li>
+<li>大并发抢购排队机制，如抢购商品时，目前库存200个，但下单请求为300个，可以将300个下单请求按时间先后进行排队，踢掉最后100个请求，以保证库存与下单量同步</li>
+<li>Session共享，由于系统采用分布式部署策略，如果将session放到Web容器中，将同一请求负载到其他主机时，会产生session丢失，所以需要将session存储于Redis服务器中</li>
+</ul>
+<ol start="3">
+<li>部署策略<br>采用3主3备、互为主备部署方案，即使3个主节点全部挂掉，3个从节点会自动升级为主节点，不影响数据读写功能，从而保证数据的完整性，系统的健壮性</li>
+</ol>
+<hr>
+<h5 id="RPC框架Dubbo-amp-Zookeeper"><a href="#RPC框架Dubbo-amp-Zookeeper" class="headerlink" title="RPC框架Dubbo&amp;Zookeeper"></a>RPC框架Dubbo&amp;Zookeeper</h5><p>Dubbo与Zookeeper组合实现了RPC服务的注册及调用，Dubbo封装了RPC框架，Zookeeper提供了服务注册及发现功能，同时为Dubbo提供负载均衡及集群服务，可以使服务提供方、调用方在局域网内通过序列化对象介质高速通信及数据传输，在提高通信性能的同时，也省去了负载均衡设备。</p>
+<ol>
+<li>Dubbo技术分析</li>
+</ol>
+<ul>
+<li>暴露服务方称之为“服务提供者”、调用远程服务方称之为“服务消费者”</li>
+<li>Dubbo 是阿里巴巴公司开源的一个高性能优秀的服务框架，使得应用可通过高性能的 RPC 实现服务的输出和输入功能，可以和 Spring框架无缝集成</li>
+<li>支持多种数据传输协议如：RMI、HTTP、Hessian</li>
+<li>几种协议的通讯效率依次为：RMI &gt; Httpinvoker &gt;= Hessian &gt;&gt; Burlap&gt;&gt; webService，测试结果显示：webservice的效率还是要比其他通讯协议慢10倍</li>
+<li>Provider：暴露服务方称之为“服务提供者”， Consumer：调用远程服务方称之为“服务消费者”</li>
+</ul>
+<ol start="2">
+<li>Zookeeper技术分析 </li>
+</ol>
+<ul>
+<li>ZooKeeper是一个分布式的，开放源码的分布式应用程序协调服务</li>
+<li>在整体框架中，担任服务注册机及负载均衡的角色，Dubbo的Provider及Consumer对应的服务都注册到Zookeeper上</li>
+<li>Consumer端第一次调用Provider服务，是通过Zookeeper进行调用，当首次连接建立完后，Consumer与Provider可以直接在局域网中通信</li>
+</ul>
+<ol start="3">
+<li>业务场景</li>
+</ol>
+<ul>
+<li>各数据中心如商品中心、订单中心、用户中心、基础中心、营销中心、报表中心，这些提供原子性服务的数据中心，作为Dubbo的P提供者</li>
+<li>角色注册到Zookeeper上，统一接入层的业务中心作为服务消费者在Zookeeper上订阅服务，同时它也承担着服务提供者角色供定时任务、接口服务这些消费者调用</li>
+</ul>
+<ol start="4">
+<li>部署策略</li>
+</ol>
+<ul>
+<li>Dubbo服务的Provider、Consumer均使用集群部署</li>
+<li>Zookeeper采用1主2备部署方案，因为zookeeper集群是以宕机个数过半才会让整个集群宕机的，使用的是投票及选举机制，所以奇数个集群更佳</li>
+</ul>
+<hr>
+<h5 id="中间件RocketMQ"><a href="#中间件RocketMQ" class="headerlink" title="中间件RocketMQ"></a>中间件RocketMQ</h5><p>RocketMQ 是一款分布式、队列模型的消息中间件，它具有保证严格的消息顺序、提供丰富的消息拉取模式、具备高效的订阅者水平扩展能力、实时的消息订阅机制以及亿级消息堆积能力的技术特点。<br>优点：</p>
+<ul>
+<li>阿里产品，消息策略、系统架构和应用场景均基于电商平台；</li>
+<li>提供多种消费模式，如顺序消费、事务消费、随机消费等，为各种复杂的业务场景提供更全面的技术支持；</li>
+<li>消息消费性能好，支持上万个队列，不会出现消息大量积压；</li>
+<li>文档资料较丰富、技术社区也比较活跃，便于后期维护及故障处理。<br>应用：</li>
+<li>在电商平台主要用于非主业务异步处理，如：日志处理、订单支付、短信发送等，使主业务快速响应，</li>
+<li>生产环境采用2m-2s-async双主双从异步刷盘集群部署，即使磁盘损坏，消息丢失少，且实时性无影响，任一master宕机，均可在另一master中写消息，即使全部宕机，消费者仍可从slave中消费，此过程对应用透明，不用人为干预，以保证系统健壮性，防止单点故障。</li>
+</ul>
+<hr>
+<h5 id="Mycat数据库中间件技术"><a href="#Mycat数据库中间件技术" class="headerlink" title="Mycat数据库中间件技术"></a>Mycat数据库中间件技术</h5><p>Mycat优点</p>
+<ul>
+<li>支持SQL92标准</li>
+<li>支持MYSQL集群，可作为数据库Proxy使用</li>
+<li>提供高可用性数据分片集群，自动故障切换</li>
+<li>支持读写分离，支持MySQL双主多从，以及一主多从的模式</li>
+<li>支持全局表，数据自动分片到多个节点，用于高效表关联查询</li>
+</ul>
+<hr>
+<h5 id="任务调度：Quartz框架"><a href="#任务调度：Quartz框架" class="headerlink" title="任务调度：Quartz框架"></a>任务调度：Quartz框架</h5><ol>
+<li>技术特点：</li>
+</ol>
+<ul>
+<li>Quartz是任务调度框架，它可以与J2EE与J2SE应用程序相结合也可以单独使用。Quartz可以用来创建简单或为运行十个，百个，甚至是好几万个Jobs这样复杂的程序，并可以做成标准的Java组件或 EJB</li>
+<li>提供数据库持久化方式实现任务集群，具备负载均衡和容错能力</li>
+<li>丰富的执行计划配置，且可以在不停应用的情况下，随时调整，实时执行</li>
+<li>多线程处理，并融入线程池机制，最大效率利用CPU资源</li>
+<li>提供完善的API接口，对独立任务实时启停，不影响其他任务执行，并可以自行扩展监控机制。</li>
+<li>可以通过实现一个或者多个监听器接口来实现捕捉日程事件，以监视或控制任务/触发器的行为，例如:记录任务执行历史的日志，或者从文件中载入任务和触发器的定义。</li>
+</ul>
+<ol start="2">
+<li>应用场景</li>
+</ol>
+<ul>
+<li>定时调第三方终端厂商接口，抽取物流信息数据、订单数据</li>
+<li>定时查询营销活动，上传文件到ftp</li>
+<li>定时核对账单</li>
+<li>定时生成订单</li>
+</ul>
+<hr>
+<h5 id="并行计算：Fork-Join框架"><a href="#并行计算：Fork-Join框架" class="headerlink" title="并行计算：Fork/Join框架"></a>并行计算：Fork/Join框架</h5><ol>
+<li>技术特点：</li>
+</ol>
+<ul>
+<li>Fork/Join框架是Java7提供了的一个用于并行执行任务的框架， 是一个把大任务分割成若干个小任务，最终汇总每个小任务结果后得到大任务结果的框架。</li>
+<li>工作窃取（work-stealing）算法，当某个线程执行完当前任务时，可以从其他队列里窃取任务来执行，最大效率的利用线程资源</li>
+</ul>
+<ol start="2">
+<li>应用场景：</li>
+</ol>
+<ul>
+<li>批量解析文件，比如现在FTP上有100个文件，可以将此大任务拆分成若干个子任务，根据CPU线程总数执行若干个子任务，并将各个子任务的执行结果汇总至大任务。</li>
+<li>批量调第三方接口，当订单量比较大时，需要频繁调外围系统的下单接口，如果是线性执行，则处理速度较慢，可以将订单数据进行拆分，多线程并行调用，将大大缩短下单时间</li>
+</ul>
+<hr>
+<h5 id="搜索引擎：Solr"><a href="#搜索引擎：Solr" class="headerlink" title="搜索引擎：Solr"></a>搜索引擎：Solr</h5><p>Solr是一个非常流行的，高性能的开源企业级搜索引擎平台，属于Apache Lucene项目。主要功能包括强大的全文检索、结果高亮、切面检索、动态聚类、数据库整合、富文本（例如Word，PDF）的处理，以及地理信息搜索。Solr是高度可扩展的，提供分布式检索和索引复制。</p>
+<hr>
+<p>存在的困扰问题</p>
+<ol>
+<li>跨库查询问题</li>
+<li>高并发系统不稳定问题</li>
+<li>异步处理事务一致性问题</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/系统设计/" rel="tag">#系统设计</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/24/RequireJS/" rel="next" title="RequireJS">
+                <i class="fa fa-chevron-left"></i> RequireJS
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/27/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/09/26/在线系统设计/"
+           data-title="系统设计" data-url="https://chasgao.github.io/2018/09/26/在线系统设计/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/53.jpg"
+               alt="Chas Gao" />
+          <p class="site-author-name" itemprop="name">Chas Gao</p>
+          <p class="site-description motion-element" itemprop="description">Just do it !</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ChasGao" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#基础技术框架"><span class="nav-number">1.</span> <span class="nav-text">基础技术框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#存储系统"><span class="nav-number">2.</span> <span class="nav-text">存储系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RPC框架Dubbo-amp-Zookeeper"><span class="nav-number">3.</span> <span class="nav-text">RPC框架Dubbo&amp;Zookeeper</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#中间件RocketMQ"><span class="nav-number">4.</span> <span class="nav-text">中间件RocketMQ</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Mycat数据库中间件技术"><span class="nav-number">5.</span> <span class="nav-text">Mycat数据库中间件技术</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#任务调度：Quartz框架"><span class="nav-number">6.</span> <span class="nav-text">任务调度：Quartz框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#并行计算：Fork-Join框架"><span class="nav-number">7.</span> <span class="nav-text">并行计算：Fork/Join框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#搜索引擎：Solr"><span class="nav-number">8.</span> <span class="nav-text">搜索引擎：Solr</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chas Gao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"chasgao"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
